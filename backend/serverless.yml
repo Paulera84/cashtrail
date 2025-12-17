@@ -22,6 +22,18 @@ provider:
             - dynamodb:Query
           Resource: "*"
 
+  httpApi:
+    cors:
+      allowedOrigins: 
+        - http://localhost:3000
+      allowedHeaders:
+        - Content-Type
+      allowedMethods:
+        - Get
+        - POST 
+        - OPTIONS
+        - PUT 
+
 functions:
   createExpense:
     handler: handlers/createExpense.createExpense
