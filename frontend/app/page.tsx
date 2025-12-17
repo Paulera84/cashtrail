@@ -7,9 +7,9 @@ export default async function Home() {
 
   const expenses = await getExpenses("user123"); //hardcoded userId for now
 
-  const sortedExpenses = expenses.sort(
-    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-  )
+  // const sortedExpenses = expenses.sort(
+  //   (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  // )
 
   return (
     <main className="min-h-screen bg-gray-50 p-8">
@@ -19,7 +19,7 @@ export default async function Home() {
           <AddExpenseDialog />
         </CardHeader>
         <CardContent>
-          <ExpenseTable expenses={sortedExpenses} />
+          <ExpenseTable expenses={expenses} />
         </CardContent>
       </Card>
     </main>

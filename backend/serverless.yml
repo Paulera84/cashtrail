@@ -49,6 +49,13 @@ functions:
           path: /expenses
           method: get
 
+  deleteExpense:
+    handler: handlers/deleteExpense.deleteExpense
+    events:
+      - httpApi:
+          path: /expenses/{expenseId}
+          method: delete
+
 
 resources:
   Resources:
