@@ -17,8 +17,25 @@ This repository serves as the **monorepo root**, containing both the frontend an
 | Layer | Technologies Used |
 |-------|-------------------|
 | **Frontend** | Next.js, TypeScript, Tailwind CSS, Shadcn UI |
-| **Backend** | AWS Lambda (Node.js), API Gateway |
+| **Backend** | AWS Lambda (Node.js), Serverless Framework, API Gateway |
 | **Database** | AWS DynamoDB |
 | **Authentication** | Clerk |
 | **Dev Tools** | Git, GitHub, Postman |
+
+## 🏗️ **Architecture**
+
+```
+Frontend (CashTrail Dashboard)
+          |
+          |  HTTP API Calls (GET, POST, PUT, DELETE)
+          v
+    API Gateway
+          |
+          v
+      AWS Lambda (Node.js Runtime)
+          |
+          v
+      DynamoDB Table
+```
+
 
