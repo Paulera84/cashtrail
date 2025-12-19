@@ -15,11 +15,55 @@ exports.updateExpense = async(event) => {
             }
         }
 
-        const updateExpression = [];
+        const updateExpressions = [];
         const expressionAttributeValues = {};
         const expressionAttributeNames = {};
 
-        
+        if(amount !== undefined) {
+            updateExpressions.push("#amount = :amount");
+            expressionAttributeValues[":amount"] = amount;
+            expressionAttributeNames["#amount"] = "amount";
+        }
+
+        if(category) {
+            updateExpressions.push("#category = :category");
+            expressionAtrributeValues[":category"] = category;
+            expressionAttributeNames["#category"] = "category";
+        }
+        if(date) {
+            updateExpressions.push("#date = :date");
+            expressionAttributeValues[":date"] = date;
+            expressionAttributeNames["#date"] = "date";
+        }
+        if(note !== undefined) {
+            updateExpressions.push("#note = :note");
+            expressionAttributeValues[":note"] = note;
+            expressionAttributeNames["#note"] = "note";
+        }
+
+        if(updateExpressions.length === 0) {
+            return {
+                statusCode: 400,
+                body: JSON.stringify({message: "No fields provided to update!"})
+            }
+        }
+
+        const res = await dynamoDB.update({
+            TableName: "Expenses",
+            Key: {
+                userId,
+                expenseId
+            },
+            UpdateExpression: `SET ${updateExpressions.join(", ")}`,
+            ExpressionAttributeNames: expressionAttributeNames,
+            ExpressionAttributeValues: expressionAttributeValues,
+            ReturnValues: "ALL_NEW"
+        }).promise();
+
+        return {
+            statusCode: 200,
+            body: JSON.stringify({message: "Expense updated successfully!", expense: res.Attributes})
+        }
 
     } catch(error) {
         console.error(error);

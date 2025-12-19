@@ -29,7 +29,7 @@ provider:
       allowedHeaders:
         - Content-Type
       allowedMethods:
-        - Get
+        - GET
         - POST 
         - OPTIONS
         - PUT 
