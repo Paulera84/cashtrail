@@ -1,14 +1,12 @@
 'use client';
 
-import { useState, useEffect } from "react";
-import { getExpenses, deleteExpense } from "@/lib/api";
-import { Expense } from "@/lib/api";
+import { useState, useEffect, useMemo } from "react";
+import { getExpenses, deleteExpense, Expense } from "@/lib/api";
 import { ExpenseTable } from "@/components/expenseTable";
-import { AddExpenseDialog } from "@/components/addExpenseDialog";
 import { EditExpenseDialog } from "@/components/editExpenseDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useUser, UserButton } from "@clerk/nextjs";
-import { MonthlyIncomeDialog } from "@/components/monthlyIncomeDialog";
+import { useUser } from "@clerk/nextjs";
+import { TrendingUp, Wallet, ArrowUpRight } from "lucide-react";
 
 export default function Home() {
   const { user, isLoaded } = useUser();
@@ -16,101 +14,169 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [editing, setEditing] = useState<Expense | null>(null);
 
+  const getGreeting = () => {
+    const hour = new Date().getHours();
+    if (hour < 12) return "Good Morning";
+    if (hour < 18) return "Good Afternoon";
+    return "Good Evening";
+  };
+
+  // 1. FETCH DATA
+  async function loadExpenses() {
+    if (!user?.id) return;
+    try {
+      const data = await getExpenses(user.id);
+      data.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      setExpenses(data);
+    } catch (error) {
+      console.error("Failed to load expenses", error);
+    } finally {
+      setLoading(false);
+    }
+  }
 
   useEffect(() => {
-   
-    if (!isLoaded || !user?.id) return;
-
-    async function loadExpenses() {
-      try {
-        const data = await getExpenses(user!.id);
-        // Sort by date descending
-        data.sort(
-          (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
-        );
-        setExpenses(data);
-      } catch (error) {
-        console.error("Failed to load expenses", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadExpenses();
+    if (isLoaded) loadExpenses();
   }, [isLoaded, user?.id]);
 
+  // 2. REAL-TIME CALCULATIONS
+  const stats = useMemo(() => {
+    const now = new Date();
+    const currentMonth = now.getMonth();
+    const currentYear = now.getFullYear();
+
+    // Filter for current month only
+    const monthlyItems = expenses.filter(e => {
+      const d = new Date(e.date);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    });
+
+    // Calculate Total Monthly Expenses
+    const totalMonthly = monthlyItems.reduce((sum, e) => sum + e.amount, 0);
+
+    // Calculate Top Category
+    const categoryMap: Record<string, number> = {};
+    monthlyItems.forEach(e => {
+      categoryMap[e.category] = (categoryMap[e.category] || 0) + e.amount;
+    });
+
+    const topCat = Object.entries(categoryMap).sort((a, b) => b[1] - a[1])[0];
+
+    return {
+      monthlyTotal: totalMonthly,
+      topCategory: topCat ? topCat[0] : "N/A"
+    };
+  }, [expenses]);
+
+  // Actions
   async function handleDelete(expenseId: string) {
     if (!user) return;
-    
     setExpenses((prev) => prev.filter((e) => e.expenseId !== expenseId));
-
     try {
       await deleteExpense(user.id, expenseId);
     } catch (error) {
-      alert("Failed to delete expense");
-  
-      const data = await getExpenses(user.id);
-      setExpenses(data);
+      loadExpenses(); // Rollback on failure
     }
   }
 
-  function handleEdit(expense: Expense) {
-    setEditing(expense);
-  }
-
-  function handleUpdated(updated: Expense) {
-    setExpenses((prev) =>
-      prev.map((e) => (e.expenseId === updated.expenseId ? updated : e))
-    );
-  }
-
-  
   if (!isLoaded || loading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen">
+      <div className="flex flex-col items-center justify-center min-h-[80vh]">
         <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-        <p className="text-muted-foreground mt-4">Loading CashTrail...</p>
+        <p className="text-muted-foreground mt-4">Loading Dashboard...</p>
       </div>
     );
   }
 
   return (
-    <main className="min-h-screen bg-gray-50 p-8">
-      <Card className="max-w-4xl mx-auto shadow-sm">
-        <CardHeader className="flex flex-row items-center justify-between border-b mb-6">
-          <CardTitle className="text-2xl font-bold text-gray-800">
-            CashTrail — Expenses <br/>
-            Hello, <span className="text-blue-600">{user?.firstName}</span>
-          </CardTitle>
-          <div className="flex items-center gap-4">
-            <AddExpenseDialog />
-            <MonthlyIncomeDialog />
-            
-            <UserButton afterSignOutUrl="/sign-in" />
-          </div>
-        </CardHeader>
+    <main className="max-w-7xl mx-auto p-6 lg:p-10 space-y-10">
+      <header className="space-y-1">
+        <h1 className="text-3xl font-bold tracking-tight">
+          {getGreeting()}, <span className=" text-green-400">{user?.firstName || "User"}</span> !
+        </h1>
+        <p className="text-muted-foreground">Here is what is happening with your money today.</p>
+      </header>
 
-        <CardContent>
-          {expenses.length === 0 ? (
-            <p className="text-center text-gray-500">No expenses recorded yet.</p>
-          ) : (
-            <ExpenseTable
-              expenses={expenses}
-              onDelete={handleDelete}
-              onEdit={handleEdit}
-            />
-          )}
+      {/* KPI Cards Section with Real Data */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 ">
+        <KPICard 
+          title="Total Balance" 
+          value="₹0" // Update this once your Income API is ready
+          icon={<Wallet className="w-4 h-4" />} 
+          active 
+        />
+        <KPICard 
+          title="Monthly Expenses" 
+          value={`₹${stats.monthlyTotal.toLocaleString('en-IN')}`} 
+          icon={<TrendingUp className="w-4 h-4" />} 
+        />
+        <KPICard 
+          title="Top Category" 
+          value={stats.topCategory} 
+          icon={<ArrowUpRight className="w-4 h-4" />} 
+        />
+      </div>
+
+      <Card className="bg-card/40 border-border border-2 border-dashed">
+        <CardHeader>
+          <CardTitle className="text-lg font-medium">Spending Overview</CardTitle>
+        </CardHeader>
+        <CardContent className="h-[300px] flex items-center justify-center">
+          <p className="text-muted-foreground italic">Charts coming soon based on your {expenses.length} transactions.</p>
         </CardContent>
       </Card>
+
+      <section className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold tracking-tight">Recent Transactions</h2>
+          <button 
+            onClick={() => window.location.href = '/expenses'}
+            className="text-sm text-primary hover:underline"
+          >
+            View all
+          </button>
+        </div>
+        
+        <div className="bg-card rounded-xl border border-border overflow-hidden">
+          {expenses.length === 0 ? (
+            <div className="p-10 text-center text-muted-foreground">No transactions recorded yet.</div>
+          ) : (
+            <ExpenseTable
+              expenses={expenses.slice(0, 3)} 
+              onDelete={handleDelete}
+              onEdit={(e) => setEditing(e)}
+            />
+          )}
+        </div>
+      </section>
 
       {editing && (
         <EditExpenseDialog
           expense={editing}
-          open={true}
+          open={!!editing}
           onClose={() => setEditing(null)}
-          onUpdated={handleUpdated}
+          onUpdated={(updated) => {
+            setExpenses(prev => prev.map(e => e.expenseId === updated.expenseId ? updated : e));
+          }}
         />
       )}
     </main>
+  );
+}
+
+function KPICard({ title, value, icon, active }: { title: string; value: string; icon: React.ReactNode; active?: boolean }) {
+  return (
+    <Card className="relative overflow-hidden border-none bg-card shadow-md">
+      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
+        <div className="opacity-70 text-green-400">{icon}</div>
+      </CardHeader>
+      <CardContent>
+        <div className="text-2xl font-bold text-green-300">{value}</div>
+        {active && (
+          <div className="absolute bottom-0 left-0 w-full h-1 bg-primary" />
+        )}
+      </CardContent>
+    </Card>
   );
 }

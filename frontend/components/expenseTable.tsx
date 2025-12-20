@@ -1,43 +1,72 @@
+'use client';
+
 import { Expense } from "@/lib/api";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "./ui/table";
 import { Button } from "./ui/button";
+import { MoreHorizontal, Edit2, Trash2 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 interface Props {
-  expenses: Expense[]
-  onDelete: (expenseId: string) => void
-  onEdit: (expense: Expense) => void
+  expenses: Expense[];
+  onDelete: (expenseId: string) => void;
+  onEdit: (expense: Expense) => void;
 }
 
-export function ExpenseTable({ expenses, onDelete, onEdit} : Props) {
+export function ExpenseTable({ expenses, onDelete, onEdit }: Props) {
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          <TableHead>Date</TableHead>
-          <TableHead>Category</TableHead>
-          <TableHead>Note</TableHead>
-          <TableHead className="text-right">Amount</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
-        </TableRow>
-      </TableHeader>
-
-      <TableBody>
-        {expenses.map((expense) => (
-          <TableRow key={expense.expenseId}>
-            <TableCell>{expense.date}</TableCell>
-            <TableCell>{expense.category}</TableCell>
-            <TableCell>{expense.note}</TableCell>
-            <TableCell className="text-right">
-              ₹{expense.amount}
-            </TableCell>
-
-            <TableCell className="text-right space-x-2">
-              <Button variant="outline" size="sm" onClick={() => onEdit(expense)}>Edit</Button>
-              <Button variant="outline" size="sm" onClick={() => onDelete(expense.expenseId)}>Delete</Button>
-            </TableCell>
+    <div className="rounded-md border border-border">
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Date</TableHead>
+            <TableHead>Category</TableHead>
+            <TableHead>Note</TableHead>
+            <TableHead className="text-right">Amount</TableHead>
+            <TableHead className="text-right w-[100px]">Actions</TableHead>
           </TableRow>
-        ))}
-      </TableBody>
-    </Table>
-  )
+        </TableHeader>
+
+        <TableBody>
+          {expenses.map((expense) => (
+            <TableRow key={expense.expenseId}>
+              <TableCell>{expense.date}</TableCell>
+              <TableCell>
+                <span className="bg-primary/10 text-primary px-2 py-1 rounded text-xs">
+                    {expense.category}
+                </span>
+              </TableCell>
+              <TableCell className="text-muted-foreground">{expense.note}</TableCell>
+              <TableCell className="text-right font-bold">₹{expense.amount}</TableCell>
+
+              <TableCell className="text-right">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="h-8 w-8 p-0">
+                      <MoreHorizontal className="h-4 w-4" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem onClick={() => onEdit(expense)}>
+                      <Edit2 className="mr-2 h-4 w-4" /> Edit
+                    </DropdownMenuItem>
+                    <DropdownMenuItem 
+                      onClick={() => onDelete(expense.expenseId)}
+                      className="text-destructive"
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" /> Delete
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </div>
+  );
 }
