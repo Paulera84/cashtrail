@@ -78,7 +78,8 @@ export default function Home() {
       <Card className="max-w-4xl mx-auto shadow-sm">
         <CardHeader className="flex flex-row items-center justify-between border-b mb-6">
           <CardTitle className="text-2xl font-bold text-gray-800">
-            CashTrail — Expenses
+            CashTrail — Expenses <br/>
+            Hello, <span className="text-blue-600">{user?.username}</span>
           </CardTitle>
           <div className="flex items-center gap-4">
             <AddExpenseDialog />
