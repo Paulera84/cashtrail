@@ -79,7 +79,7 @@ export default function Home() {
         <CardHeader className="flex flex-row items-center justify-between border-b mb-6">
           <CardTitle className="text-2xl font-bold text-gray-800">
             CashTrail — Expenses <br/>
-            Hello, <span className="text-blue-600">{user?.username}</span>
+            Hello, <span className="text-blue-600">{user?.firstName}</span>
           </CardTitle>
           <div className="flex items-center gap-4">
             <AddExpenseDialog />
@@ -89,11 +89,15 @@ export default function Home() {
         </CardHeader>
 
         <CardContent>
-          <ExpenseTable
-            expenses={expenses}
-            onDelete={handleDelete}
-            onEdit={handleEdit}
-          />
+          {expenses.length === 0 ? (
+            <p className="text-center text-gray-500">No expenses recorded yet.</p>
+          ) : (
+            <ExpenseTable
+              expenses={expenses}
+              onDelete={handleDelete}
+              onEdit={handleEdit}
+            />
+          )}
         </CardContent>
       </Card>
 
