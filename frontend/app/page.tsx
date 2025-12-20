@@ -7,6 +7,7 @@ import { EditExpenseDialog } from "@/components/editExpenseDialog";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useUser } from "@clerk/nextjs";
 import { TrendingUp, Wallet, ArrowUpRight } from "lucide-react";
+import { KPICard } from "@/components/kpicard";
 
 export default function Home() {
   const { user, isLoaded } = useUser();
@@ -164,19 +165,3 @@ export default function Home() {
   );
 }
 
-function KPICard({ title, value, icon, active }: { title: string; value: string; icon: React.ReactNode; active?: boolean }) {
-  return (
-    <Card className="relative overflow-hidden border-none bg-card shadow-md">
-      <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-        <CardTitle className="text-sm font-medium text-muted-foreground">{title}</CardTitle>
-        <div className="opacity-70 text-green-400">{icon}</div>
-      </CardHeader>
-      <CardContent>
-        <div className="text-2xl font-bold text-green-300">{value}</div>
-        {active && (
-          <div className="absolute bottom-0 left-0 w-full h-1 bg-primary" />
-        )}
-      </CardContent>
-    </Card>
-  );
-}
