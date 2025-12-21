@@ -107,7 +107,7 @@ export default function Home() {
           active 
         />
         <KPICard 
-          title="Monthly Expenses" 
+          title={`Monthly Expenses ${new Date().toLocaleString('default', { month: 'long' })}` }
           value={`₹${stats.monthlyTotal.toLocaleString('en-IN')}`} 
           icon={<TrendingUp className="w-4 h-4" />} 
         />

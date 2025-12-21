@@ -54,7 +54,7 @@ export default function ExpensesPage() {
             <Card className="bg-card border-none shadow-sm">
                 <CardContent className="pt-6">
                     <div className="flex items-center justify-between mb-6">
-                        <h2 className="text-lg font-semibold text-muted-foreground">Total This Month</h2>
+                        <h2 className="text-lg font-semibold text-muted-foreground">Total for the Month: {new Date().toLocaleString('default', { month: 'long' })}</h2>
                         <span className="text-2xl font-bold text-primary">₹{monthlyTotal.toLocaleString()}</span>
                     </div>
                     
